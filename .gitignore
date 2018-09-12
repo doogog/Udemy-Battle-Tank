@@ -78,3 +78,6 @@ DerivedDataCache/*
 
 # Ignore Starter Content
 Content/StarterContent/*
+
+# Ignore Deploys
+Deploy/*
