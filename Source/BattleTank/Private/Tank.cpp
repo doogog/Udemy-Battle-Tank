@@ -18,7 +18,6 @@ ATank::ATank()
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG( LogTemp, Warning, TEXT("lsdjkaf"));
 }
 
 // Called to bind functionality to input
