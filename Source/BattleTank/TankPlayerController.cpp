@@ -4,21 +4,29 @@
 #include "Engine/World.h"
 #include "CameraController.h"
 #include "DrawDebugHelpers.h"
-#include "Tank.h"
+#include "TankAimingComponent.h"
 
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ATank* ControlledTank = GetControlledTank();
-	if ( ControlledTank )
+	/*if ( ControlledTank )
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PlayerController controlled: %s"), *ControlledTank->GetName());
-	}
-	else
+	} else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PlayerController has no possessed Tank!"));
+	}*/
+
+	UTankAimingComponent* AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	if ( ensure(AimingComponent) )
+	{
+		FoundAimingComponent(AimingComponent);
 	}
+	/*else
+	{
+		UE_LOG( LogTemp, Warning, TEXT("TankPlayerController couldn't find AimingComponent!") );
+	}*/
 }
 
 // Called every frame
@@ -29,20 +37,16 @@ void ATankPlayerController::Tick(float DeltaTime)
 	AimTowardsCrosshair();
 }
 
-ATank* ATankPlayerController::GetControlledTank() const
-{
-	return Cast<ATank>(GetPawn());
-}
-
 void ATankPlayerController::AimTowardsCrosshair()
 {
-	if ( !GetControlledTank() ) return;
+	UTankAimingComponent* AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	if ( !ensure(AimingComponent) ) return;
 
 	FVector HitLocation; // Out Parameter
 
 	if ( GetSightRayHitLocation(HitLocation) )
 	{
-		GetControlledTank()->AimAt( HitLocation );
+		AimingComponent->AimAt( HitLocation );
 		//DrawDebugLine(GetWorld(), PlayerCameraManager->GetCameraLocation(), HitLocation, FColor(255, 0, 0), false, 0.0f, 0.0f, 10.0f);
 	}
 }

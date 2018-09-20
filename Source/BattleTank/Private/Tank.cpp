@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Tank.h"
-#include "TankAimingComponent.h"
 #include "TankBarrel.h"
 #include "TankTurret.h"
 #include "Engine/World.h"
@@ -24,6 +23,7 @@ void ATank::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//TankAimingComponent = FindComponentByClass<UTankAimingComponent>();
 	//Cast<UPrimitiveComponent>( GetRootComponent() )->SetSimulatePhysics( true );
 }
 
@@ -34,11 +34,16 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }*/
 
+/*
 void ATank::AimAt(FVector HitLocation)
 {
-	if (!TankAimingComponent) return;
+	if ( !ensure(TankAimingComponent) )
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("No TankAimingComponent!!"));
+		return;
+	}
 	TankAimingComponent->AimAt(HitLocation, LaunchSpeed);
-}
+}*/
 
 /*
 void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
@@ -51,21 +56,3 @@ void ATank::SetTurretReference(UTankTurret* TurretToSet)
 {
 	TankAimingComponent->SetTurretReference(TurretToSet);
 }*/
-
-void ATank::Fire()
-{
-	//UE_LOG( LogTemp, Warning, TEXT("Fire!!") );
-	bool isReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
-	
-	if ( isReloaded && Barrel )
-	{
-		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
-			ProjectileBlueprint,
-			Barrel->GetSocketLocation(FName("Projectile")),
-			Barrel->GetSocketRotation(FName("Projectile"))
-			);
-
-		Projectile->LaunchProjectile(LaunchSpeed);
-		LastFireTime = FPlatformTime::Seconds();
-	}
-}
