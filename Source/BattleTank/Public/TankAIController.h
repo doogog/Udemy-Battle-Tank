@@ -6,7 +6,7 @@
 #include "AIController.h"
 #include "TankAIController.generated.h"
 
-
+class UTankAimingComponent;
 
 /**
  * 
@@ -16,6 +16,10 @@ class BATTLETANK_API ATankAIController : public AAIController
 {
 	GENERATED_BODY()
 	
+protected:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
+	void AimingComponentFire(UTankAimingComponent* AimCompRef);
+
 private:	
 	virtual void BeginPlay() override;
 
@@ -23,5 +27,6 @@ private:
 	virtual void Tick(float DeltaTime) override;
 
 	// How close can AI Tank get
-	float AcceptanceRadius = 3000;
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	float AcceptanceRadius = 2500;
 };

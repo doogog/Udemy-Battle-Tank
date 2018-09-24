@@ -34,10 +34,12 @@ public:
 	void AimAt(FVector HitLocation);
 
 	UFUNCTION(BlueprintCallable)
-	void Fire();
+	void Fire(TSubclassOf<AProjectile> ProjectileClass);
 
-	UPROPERTY(EditAnywhere, Category = "Setup")
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AProjectile> ProjectileBlueprint;
+
+	EFiringState GetFiringState() const;
 
 protected:
 	// Called when the game starts

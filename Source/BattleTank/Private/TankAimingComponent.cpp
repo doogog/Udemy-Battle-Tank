@@ -17,6 +17,10 @@ UTankAimingComponent::UTankAimingComponent()
 	
 }
 
+EFiringState UTankAimingComponent::GetFiringState() const
+{
+	return FiringState;
+}
 
 // Called when the game starts
 void UTankAimingComponent::BeginPlay()
@@ -92,18 +96,27 @@ void UTankAimingComponent::MoveBarrelToward(FVector AimDirection)
 	//UE_LOG( LogTemp, Warning, TEXT("Elevate to Pitch: %f"), DeltaRotator.Pitch );
 
 	Barrel->Elevate(DeltaRotator.Pitch);
-	Turret->Rotate(DeltaRotator.Yaw);
+	
+	// Always yaw the shortest way
+	if ( FMath::Abs(DeltaRotator.Yaw) < 180 )
+	{
+		Turret->Rotate(DeltaRotator.Yaw);
+	}
+	else
+	{
+		Turret->Rotate(-DeltaRotator.Yaw);
+	}
 }
 
-void UTankAimingComponent::Fire()
+void UTankAimingComponent::Fire(TSubclassOf<AProjectile> ProjectileClass)
 {
 	//UE_LOG( LogTemp, Warning, TEXT("Fire!!") );
 
 	if ( FiringState != EFiringState::Reloading )
 	{
-		if ( !ensure(Barrel && ProjectileBlueprint) ) return;
+		if ( !ensure(Barrel && ProjectileClass) ) return;
 		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
-			ProjectileBlueprint,
+			ProjectileClass,
 			Barrel->GetSocketLocation(FName("Projectile")),
 			Barrel->GetSocketRotation(FName("Projectile"))
 			);
@@ -117,5 +130,5 @@ bool UTankAimingComponent::IsBarrelMoving()
 {
 	if ( !ensure(Barrel) ) return false;
 	//bool bIsEqual = Barrel->GetForwardVector().Equals(();
-	return Barrel->GetForwardVector().Equals( AimDirection, 0.01 );
+	return !Barrel->GetForwardVector().Equals( AimDirection, 0.01 );
 }
