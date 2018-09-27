@@ -36,7 +36,8 @@ void ATankAIController::Tick(float DeltaTime)
 
 		if ( AimingComponent->GetFiringState() == EFiringState::Locked )
 		{
-			//AimingComponentFire(AimingComponent);
+			//UE_LOG(LogTemp, Warning, TEXT("AI Fire!!"));
+			AimingComponentFire(AimingComponent);
 		}
 	}
 }

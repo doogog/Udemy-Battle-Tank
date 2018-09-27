@@ -36,7 +36,11 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if ( (FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds )
+	if ( RoundsLeft <= 0 )
+	{
+		FiringState = EFiringState::OutOfAmmo;
+	}
+	else if ( (FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds )
 	{
 		FiringState = EFiringState::Reloading;
 	}
@@ -112,7 +116,7 @@ void UTankAimingComponent::Fire(TSubclassOf<AProjectile> ProjectileClass)
 {
 	//UE_LOG( LogTemp, Warning, TEXT("Fire!!") );
 
-	if ( FiringState != EFiringState::Reloading )
+	if ( FiringState == EFiringState::Locked || FiringState == EFiringState::Aiming )
 	{
 		if ( !ensure(Barrel && ProjectileClass) ) return;
 		AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(
@@ -123,6 +127,9 @@ void UTankAimingComponent::Fire(TSubclassOf<AProjectile> ProjectileClass)
 
 		Projectile->LaunchProjectile(LaunchSpeed);
 		LastFireTime = FPlatformTime::Seconds();
+		RoundsLeft--;
+
+		//UE_LOG(LogTemp, Warning, TEXT("Rounds Left: %i"), RoundsLeft);
 	}
 }
 
@@ -131,4 +138,9 @@ bool UTankAimingComponent::IsBarrelMoving()
 	if ( !ensure(Barrel) ) return false;
 	//bool bIsEqual = Barrel->GetForwardVector().Equals(();
 	return !Barrel->GetForwardVector().Equals( AimDirection, 0.01 );
+}
+
+int UTankAimingComponent::GetRoundsLeft() const
+{
+	return RoundsLeft;
 }
