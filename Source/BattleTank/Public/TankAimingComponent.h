@@ -69,11 +69,12 @@ private:
 	float LaunchSpeed = 10000; // 1000/ms
 
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
-	float ReloadTimeInSeconds = 3;
+	float ReloadTimeInSeconds = 0.1;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
+	int32 RoundsLeft = 30;
 
 	double LastFireTime = 0;
 
 	FVector AimDirection;
-
-	int RoundsLeft = 3;
 };

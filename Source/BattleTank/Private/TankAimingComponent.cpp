@@ -14,6 +14,12 @@ UTankAimingComponent::UTankAimingComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	/*static ConstructorHelpers::FClassFinder<AProjectile> Proj(TEXT("/Game/Projectile/Projectile_BP"));
+
+	if ( Proj.Class )
+	{
+		ProjectileBlueprint = Proj.Class;
+	}*/
 	
 }
 
@@ -129,7 +135,7 @@ void UTankAimingComponent::Fire(TSubclassOf<AProjectile> ProjectileClass)
 		LastFireTime = FPlatformTime::Seconds();
 		RoundsLeft--;
 
-		//UE_LOG(LogTemp, Warning, TEXT("Rounds Left: %i"), RoundsLeft);
+		UE_LOG(LogTemp, Warning, TEXT("Rounds Left: %i"), RoundsLeft);
 	}
 }
 
@@ -140,7 +146,7 @@ bool UTankAimingComponent::IsBarrelMoving()
 	return !Barrel->GetForwardVector().Equals( AimDirection, 0.01 );
 }
 
-int UTankAimingComponent::GetRoundsLeft() const
+int32 UTankAimingComponent::GetRoundsLeft() const
 {
 	return RoundsLeft;
 }
